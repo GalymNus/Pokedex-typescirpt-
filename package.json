@@ -1,0 +1,32 @@
+{
+  "dependencies": {
+    "nvm": "^0.0.4"
+  },
+  "name": "pokedex-typescirpt-",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "devDependencies": {
+    "@types/node": "^25.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node dist/main.js",
+    "dev": "npx tsc && node dist/main.js",
+    "test": "vitest --run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GalymNus/Pokedex-typescirpt-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GalymNus/Pokedex-typescirpt-/issues"
+  },
+  "homepage": "https://github.com/GalymNus/Pokedex-typescirpt-#readme"
+}
