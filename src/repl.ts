@@ -12,7 +12,7 @@ export function startREPL(state: State) {
             rl.prompt();
         } else {
             if (commands[splitLines[0]]) {
-                await commands[splitLines[0]].callback(state);
+                await commands[splitLines[0]].callback(state, splitLines.slice(1));
             } else {
                 console.log("Unknown command");
             }

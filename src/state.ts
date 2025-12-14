@@ -4,14 +4,16 @@ import { createInterface, type Interface } from "readline";
 import { commandHelp } from "./commands/HelpCommand.js";
 import { commandExit } from "./commands/ExitCommand.js";
 import { commandMap } from "./commands/MapCommand.js";
+import { commandExplore } from "./commands/ExploreCommand.js";
 import { commandMapB } from "./commands/MapBCommand.js";
+import { commandCatch } from "./commands/CatchCommand.js"
 import { PokeAPI } from "./PokeAPI.js";
 import { Cache } from "./pokecache.js";
 
 export type CLICommand = {
     name: string,
     description: string,
-    callback: (state: State) => Promise<void>;
+    callback: (state: State, args?: string[]) => Promise<void>;
 }
 
 export type State = {
@@ -44,10 +46,15 @@ export function getCommands(): Record<string, CLICommand> {
             description: "Show previous nearest areas",
             callback: async (state) => await commandMapB(state),
         },
-        location: {
-            name: "location",
-            description: "Show help message",
-            callback: async (state) => await commandHelp(state),
+        explore: {
+            name: "explore",
+            description: "Explore location to find pokemons",
+            callback: async (state, args) => await commandExplore(state, args),
+        },
+        catch: {
+            name: "explore",
+            description: "Attempt to catch a pokemon",
+            callback: async (state, args) => await commandCatch(state, args),
         }
     }
 }

@@ -23,16 +23,45 @@ export class PokeAPI {
         }
     }
 
-    async fetchLocation(locationName: string): Promise<Location> {
-        const url = `${PokeAPI.baseURL}/location/${locationName}`;
-        const location = await fetch(url);
-        if (!location.ok) {
-            throw new Error(`Failed to fetch locations: ${location.status}`);
+    async fetchLocation(locationName: string): Promise<Pokemon[]> {
+        const url = `${PokeAPI.baseURL}/location-area/${locationName}`;
+        const chachedItem: Pokemon[] | undefined = PokeAPI.cache.get(url);
+        if (chachedItem) {
+            return chachedItem;
+        } else {
+            const location = await fetch(url);
+            if (!location.ok) {
+                throw new Error(`Failed to fetch locations: ${location.status}`);
+            }
+            const result = await location.json();
+            const pokemons = result.pokemon_encounters.map((item: PokemonObj) => item.pokemon);
+            PokeAPI.cache.add(url, pokemons);
+            return pokemons;
         }
-        const result = await location.json();
-        PokeAPI.cache.add(url, result);
-        return result;
     }
+
+    async fetchPokemonStats(pokemonName: string): Promise<PokemonStats> {
+        const url = `${PokeAPI.baseURL}/pokemon/${pokemonName}`;
+        console.log("url", url)
+        const chachedItem: PokemonStats | undefined = PokeAPI.cache.get(url);
+        if (chachedItem) {
+            return chachedItem;
+        } else {
+            const request = await fetch(url);
+            if (!request.ok) {
+                throw new Error(`Failed to pokemon stats: ${request.status}`);
+            }
+            const result = await request.json();
+            console.log("result", result);
+            const pokemonStats = result.base_experience;
+            console.log("pokemonStats", pokemonStats);
+            PokeAPI.cache.add(url, pokemonStats);
+            return pokemonStats;
+        }
+    }
+
+
+
 }
 
 export type ShallowLocations = {
@@ -43,10 +72,18 @@ export type ShallowLocations = {
 };
 
 export type Location = {
-    id: number,
     name: string,
-    region: string,
-    names: string[],
-    game_indices: string[],
-    areas: string[]
+}
+
+export type PokemonObj = {
+    pokemon: Pokemon
 };
+
+export type Pokemon = {
+    name: string;
+    url: string;
+}
+
+export type PokemonStats = {
+    base_experience: number;
+}
