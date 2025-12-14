@@ -6,13 +6,13 @@ export function cleanInput(input: string): string[] {
 
 export function startREPL(state: State) {
     const { readline: rl, commands } = state;
-    rl.on("line", (line: string) => {
+    rl.on("line", async (line: string) => {
         const splitLines = cleanInput(line);
         if (splitLines.length == 0) {
             rl.prompt();
         } else {
             if (commands[splitLines[0]]) {
-                commands[splitLines[0]].callback(state);
+                await commands[splitLines[0]].callback(state);
             } else {
                 console.log("Unknown command");
             }
