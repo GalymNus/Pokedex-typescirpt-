@@ -2,7 +2,6 @@ import { State } from "src/state";
 
 export async function commandExplore(state: State, args?: string[]) {
     const { pokeAPI } = state;
-    console.log("args", args);
     if (args && args.length >= 1) {
         try {
             const pokemons = await pokeAPI.fetchLocation(args[0]);
