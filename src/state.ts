@@ -7,7 +7,9 @@ import { commandMap } from "./commands/MapCommand.js";
 import { commandExplore } from "./commands/ExploreCommand.js";
 import { commandMapB } from "./commands/MapBCommand.js";
 import { commandCatch } from "./commands/CatchCommand.js"
-import { PokeAPI } from "./PokeAPI.js";
+import { commandPokedex } from "./commands/PokedexCommand.js";
+import { commandInspect } from "./commands/InspectCommand.js";
+import { PokeAPI, Pokemon } from "./PokeAPI.js";
 import { Cache } from "./pokecache.js";
 
 export type CLICommand = {
@@ -20,6 +22,7 @@ export type State = {
     commands: Record<string, CLICommand>,
     readline: Interface,
     pokeAPI: PokeAPI,
+    userPokedex: Record<string, Pokemon>
     prevLocation: string | null,
     nextLocation: string | null,
 }
@@ -52,9 +55,19 @@ export function getCommands(): Record<string, CLICommand> {
             callback: async (state, args) => await commandExplore(state, args),
         },
         catch: {
-            name: "explore",
+            name: "catch",
             description: "Attempt to catch a pokemon",
             callback: async (state, args) => await commandCatch(state, args),
+        },
+        inspect: {
+            name: "inspect",
+            description: "Check pokemon info",
+            callback: async (state, args) => await commandInspect(state, args),
+        },
+        pokedex: {
+            name: "pokedex",
+            description: "Lists caught pokemons",
+            callback: async (state) => await commandPokedex(state),
         }
     }
 }
@@ -74,6 +87,7 @@ export function initState() {
         commands: getCommands(),
         readline: rl,
         pokeAPI: new PokeAPI(cache),
+        userPokedex: {},
         prevLocation: null,
         nextLocation: null,
     }

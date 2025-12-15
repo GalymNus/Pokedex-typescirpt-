@@ -40,21 +40,24 @@ export class PokeAPI {
         }
     }
 
-    async fetchPokemonStats(pokemonName: string): Promise<PokemonStats> {
+    async fetchPokemonStats(pokemonName: string): Promise<Pokemon | -1> {
         const url = `${PokeAPI.baseURL}/pokemon/${pokemonName}`;
-        console.log("url", url)
-        const chachedItem: PokemonStats | undefined = PokeAPI.cache.get(url);
+        const chachedItem: Pokemon | undefined = PokeAPI.cache.get(url);
         if (chachedItem) {
             return chachedItem;
         } else {
             const request = await fetch(url);
             if (!request.ok) {
-                throw new Error(`Failed to pokemon stats: ${request.status}`);
+                if (request.status == 404) {
+                    return -1;
+                }
+                throw new Error(`Failed to fetch pokemon stats: ${request.status}`);
             }
             const result = await request.json();
-            console.log("result", result);
-            const pokemonStats = result.base_experience;
-            console.log("pokemonStats", pokemonStats);
+            const { name, height, weight, base_experience, stats, types } = result;
+            const pokemonStats = {
+                name, height, weight, base_experience, stats, types
+            }
             PokeAPI.cache.add(url, pokemonStats);
             return pokemonStats;
         }
@@ -81,9 +84,23 @@ export type PokemonObj = {
 
 export type Pokemon = {
     name: string;
-    url: string;
+    weight: number;
+    height: number;
+    base_experience: number;
+    stats: PokemonStat[];
+    types: PokemonType[];
+};
+
+export type PokemonStat = {
+    base_stat: number,
+    efford: number,
+    stat: {
+        name: string, url: string
+    }
 }
 
-export type PokemonStats = {
-    base_experience: number;
+export type PokemonType = {
+    slot: number,
+    type: { name: string },
+    url: string
 }
